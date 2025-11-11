@@ -59,8 +59,8 @@ build/
 Thumbs.db
 
 # Local configuration files
-application*.properties
-application*.yml
+#application*.properties
+#application*.yml
 !application-example.yml
 
 # Logs
