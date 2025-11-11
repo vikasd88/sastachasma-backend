@@ -1,30 +1,33 @@
-# First stage: Build the application
+# Build stage
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Set the working directory
+# Runtime stage
+FROM eclipse-temurin:21-jre-slim
 WORKDIR /app
 
-# Copy the Maven wrapper files and pom.xml
-COPY mvnw.cmd .
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-
-# Copy the source code
-COPY src src/
-
-# Build the application
-RUN ./mvnw.cmd clean install -DskipTests
-
-# Second stage: Runtime image
-FROM eclipse-temurin:21-jre
-
-WORKDIR /app
+# Create a non-root user
+RUN addgroup --system --gid 1001 appuser && \
+    adduser --system --uid 1001 --gid 1001 appuser
 
 # Copy the built JAR file
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder --chown=appuser:appuser /app/target/*.jar app.jar
 
-# Expose the port
+# Set file permissions
+RUN chmod 750 /app && \
+    chmod 550 /app/app.jar && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Expose port
 EXPOSE 8080
 
 # Run the application
