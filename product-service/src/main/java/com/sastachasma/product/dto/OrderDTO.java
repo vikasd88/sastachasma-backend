@@ -34,4 +34,12 @@ public class OrderDTO {
     private String paymentStatus;
     private String paymentTransactionId;
     private BigDecimal lensPrice;
+
+    /**
+     * Alias for orderNumber to match frontend expectations
+     * @return the order number
+     */
+    public String getOrderId() {
+        return this.orderNumber;
+    }
 }

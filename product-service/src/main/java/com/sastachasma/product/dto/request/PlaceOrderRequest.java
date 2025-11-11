@@ -28,9 +28,6 @@ public class PlaceOrderRequest {
     @NotBlank(message = "Estimated delivery is required")
     private String estimatedDelivery;
     
-    @NotBlank(message = "Order ID is required")
-    private String orderId;
-    
     @NotEmpty(message = "Order items are required")
     private List<@Valid OrderItemRequest> items;
     

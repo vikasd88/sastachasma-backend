@@ -1,10 +1,13 @@
+
 package com.sastachasma.product.entity;
 
+import com.sastachasma.product.util.OrderNumberGenerator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.UUID;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -22,7 +25,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "order_number", unique = true, nullable = false)
+    @Column(name = "order_number", unique = true, nullable = true)
     private String orderNumber;
     
     @Column(name = "user_id", nullable = false)
@@ -79,6 +82,16 @@ public class Order {
     
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        if (this.orderNumber == null) {
+            this.orderNumber = OrderNumberGenerator.generateOrderNumber();
+        }
+        if (this.createdAt == null) {
+            this.createdAt = ZonedDateTime.now();
+        }
+    }
     
     public enum OrderStatus {
         PENDING,
