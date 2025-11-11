@@ -2,15 +2,15 @@
 FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu AS builder
 
 # Set the working directory inside the container to the product-service directory
-WORKDIR /app
+WORKDIR /app/product-service
 
-# Copy the Maven wrapper files and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy the Maven wrapper files and pom.xml from the product-service directory
+COPY product-service/mvnw .
+COPY product-service/.mvn .mvn
+COPY product-service/pom.xml .
 
-# Copy the source code
-COPY src ./src
+# Copy the source code from the product-service directory
+COPY product-service/src ./src
 
 # Build the application using Maven
 RUN --mount=type=cache,target=/root/.m2 ./mvnw clean install -DskipTests
@@ -22,7 +22,7 @@ FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 WORKDIR /app
 
 # Copy the built JAR from the builder stage and rename it to sastachasma.jar
-COPY --from=builder /app/target/*.jar sastachasma.jar
+COPY --from=builder /app/product-service/target/*.jar sastachasma.jar
 
 # Expose the port your Spring Boot application listens on (default is 8080)
 EXPOSE 8080
