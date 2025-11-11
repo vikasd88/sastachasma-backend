@@ -2,16 +2,20 @@
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-# First copy only the POM file to cache dependencies
-COPY pom.xml .
-# Download dependencies
-RUN mvn dependency:go-offline -B
+# Copy the Maven project files
+COPY product-service/pom.xml .
+COPY product-service/.mvn .mvn
+COPY product-service/mvnw .
+COPY product-service/mvnw.cmd .
 
-# Then copy the source code
-COPY src/ src/
+# Download dependencies
+RUN ./mvnw dependency:go-offline -B
+
+# Copy the source code
+COPY product-service/src/ src/
 
 # Build the application
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:21-jre
