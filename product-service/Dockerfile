@@ -1,5 +1,5 @@
 # Use a slim OpenJDK image as the base
-FROM openjdk:17-jdk-slim as builder
+FROM openjdk:21-jdk-slim as builder
 
 # Set the working directory inside the container to the product-service directory
 WORKDIR /app/product-service
@@ -16,7 +16,7 @@ COPY product-service/src ./src
 RUN --mount=type=cache,target=/root/.m2 ./mvnw clean install -DskipTests
 
 # --- Second stage: Create a smaller runtime image ---
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 
 # Set the working directory
 WORKDIR /app
