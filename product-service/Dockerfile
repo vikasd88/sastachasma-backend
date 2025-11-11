@@ -1,5 +1,5 @@
 # First stage: Build the application
-FROM mcr.microsoft.com/openjdk:21-jdk-windowsservercore-1809 AS builder
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY src src/
 RUN ./mvnw.cmd clean install -DskipTests
 
 # Second stage: Runtime image
-FROM mcr.microsoft.com/openjdk:21-jre-windowsservercore-1809
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
