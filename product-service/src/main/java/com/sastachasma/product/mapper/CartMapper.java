@@ -23,16 +23,35 @@ public abstract class CartMapper {
             return null;
         }
 
+        // Calculate the total price by summing up all item total prices
+        BigDecimal calculatedTotalPrice = BigDecimal.ZERO;
+        if (cart.getItems() != null && !cart.getItems().isEmpty()) {
+            calculatedTotalPrice = cart.getItems().stream()
+                    .map(CartItem::getTotalPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+
         CartDTO.CartDTOBuilder cartDTO = CartDTO.builder()
                 .id(cart.getId())
                 .userId(cart.getUserId())
-                .totalPrice(cart.getTotalPrice())
+                .totalPrice(calculatedTotalPrice) // Use the calculated total price
                 .isActive(cart.getIsActive());
 
         if (cart.getItems() != null) {
-            cartDTO.items(cart.getItems().stream()
+            // Map items to DTOs and ensure lens price is included in the total
+            List<CartItemDTO> itemDTOs = cart.getItems().stream()
                     .map(this::toCartItemDTO)
-                    .collect(Collectors.toList()));
+                    .peek(item -> {
+                        // Ensure each item's total price includes lens price
+                        if (item.getLensPrice() != null) {
+                            BigDecimal itemTotal = item.getPriceAtAddition().add(item.getLensPrice())
+                                    .multiply(BigDecimal.valueOf(item.getQuantity()));
+                            item.setTotalPrice(itemTotal);
+                        }
+                    })
+                    .collect(Collectors.toList());
+            
+            cartDTO.items(itemDTOs);
         }
 
         return cartDTO.build();
