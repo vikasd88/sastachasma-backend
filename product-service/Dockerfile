@@ -8,8 +8,9 @@ COPY product-service/.mvn .mvn
 COPY product-service/mvnw .
 COPY product-service/mvnw.cmd .
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
+# Set execute permissions and download dependencies
+RUN chmod +x mvnw && \
+    ./mvnw dependency:go-offline -B
 
 # Copy the source code
 COPY product-service/src/ src/
