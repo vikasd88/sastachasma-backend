@@ -4,13 +4,13 @@ FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu AS builder
 # Set the working directory inside the container to the product-service directory
 WORKDIR /app/product-service
 
-# Copy the Maven wrapper files and pom.xml from the product-service directory
-COPY product-service/mvnw .
-COPY product-service/.mvn .mvn
-COPY product-service/pom.xml .
+# Copy the Maven wrapper files and pom.xml
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Copy the source code from the product-service directory
-COPY product-service/src ./src
+# Copy the source code
+COPY src ./src
 
 # Build the application using Maven
 RUN --mount=type=cache,target=/root/.m2 ./mvnw clean install -DskipTests
