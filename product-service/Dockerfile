@@ -1,5 +1,5 @@
 # Use a slim OpenJDK image as the base
-FROM eclipse-temurin:21-jdk-slim as builder
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu AS builder
 
 # Set the working directory inside the container to the product-service directory
 WORKDIR /app/product-service
@@ -16,7 +16,7 @@ COPY product-service/src ./src
 RUN --mount=type=cache,target=/root/.m2 ./mvnw clean install -DskipTests
 
 # --- Second stage: Create a smaller runtime image ---
-FROM eclipse-temurin:21-jdk-slim
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 
 # Set the working directory
 WORKDIR /app
