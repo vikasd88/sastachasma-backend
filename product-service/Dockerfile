@@ -1,7 +1,16 @@
 # Build stage
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY . .
+
+# First copy only the POM file to cache dependencies
+COPY pom.xml .
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Then copy the source code
+COPY src/ src/
+
+# Build the application
 RUN mvn clean package -DskipTests
 
 # Runtime stage
