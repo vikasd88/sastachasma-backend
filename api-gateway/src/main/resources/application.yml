@@ -1,0 +1,124 @@
+server:
+  port: 8085 # Corrected API Gateway port to 8085
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: product-service-api
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+        - id: product-service-openapi
+          uri: lb://product-service
+          predicates:
+            - Path=/v3/api-docs/product-service
+          filters:
+            - RewritePath=/v3/api-docs/product-service, /v3/api-docs
+        - id: product-service-swagger
+          uri: lb://product-service
+          predicates:
+            - Path=/swagger-ui/product-service/**
+          filters:
+            - RewritePath=/swagger-ui/product-service/(?<segment>.*), /swagger-ui/${segment}
+        - id: user-service-api
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+        - id: user-service-openapi
+          uri: lb://user-service
+          predicates:
+            - Path=/v3/api-docs/user-service
+          filters:
+            - RewritePath=/v3/api-docs/user-service, /v3/api-docs
+        - id: user-service-swagger
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/swagger-ui/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
+        - id: order-service-api
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+        - id: cart-service-api
+          uri: lb://order-service
+          predicates:
+            - Path=/api/cart/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+        - id: order-service-openapi
+          uri: lb://order-service
+          predicates:
+            - Path=/v3/api-docs/order-service
+          filters:
+            - RewritePath=/v3/api-docs/order-service, /v3/api-docs
+        - id: order-service-swagger
+          uri: lb://order-service
+          predicates:
+            - Path=/swagger-ui/order-service/**
+          filters:
+            - RewritePath=/swagger-ui/order-service/(?<segment>.*), /swagger-ui/${segment}
+        - id: payment-service-api
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+        - id: payment-service-openapi
+          uri: lb://payment-service
+          predicates:
+            - Path=/v3/api-docs/payment-service
+          filters:
+            - RewritePath=/v3/api-docs/payment-service, /v3/api-docs
+        - id: payment-service-swagger
+          uri: lb://payment-service
+          predicates:
+            - Path=/swagger-ui/payment-service/**
+          filters:
+            - RewritePath=/swagger-ui/payment-service/(?<segment>.*), /swagger-ui/${segment}
+        - id: lens-service-api
+          uri: lb://lens-service
+          predicates:
+            - Path=/api/lenses/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /${segment}
+        - id: lens-service-openapi
+          uri: lb://lens-service
+          predicates:
+            - Path=/v3/api-docs/lens-service
+          filters:
+            - RewritePath=/v3/api-docs/lens-service, /v3/api-docs
+        - id: lens-service-swagger
+          uri: lb://lens-service
+          predicates:
+            - Path=/swagger-ui/lens-service/**
+          filters:
+            - RewritePath=/swagger-ui/lens-service/(?<segment>.*), /swagger-ui/${segment}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+    actuator:
+      base-path: /actuator
