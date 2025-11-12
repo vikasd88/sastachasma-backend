@@ -19,7 +19,7 @@ import java.util.List;
 
 @Tag(name = "Product", description = "APIs for managing products")
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -141,5 +141,21 @@ public class ProductController {
             @PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Update product stock",
+            description = "Updates the stock quantity for a specific product")
+    @ApiResponse(responseCode = "200",
+            description = "Product stock updated successfully")
+    @ApiResponse(responseCode = "404",
+            description = "Product not found")
+    @PutMapping("/{productId}/stock")
+    public ResponseEntity<Void> updateProductStock(
+            @Parameter(description = "ID of the product to update stock for")
+            @PathVariable Long productId,
+            @Parameter(description = "Quantity to add or subtract from stock (can be negative)")
+            @RequestParam Integer quantity) {
+        productService.updateProductStock(productId, quantity);
+        return ResponseEntity.ok().build();
     }
 }

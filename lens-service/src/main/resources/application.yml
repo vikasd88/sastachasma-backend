@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: lens-service
+  datasource:
+    url: jdbc:mysql://100.69.32.37:3306/sastachasma_lens
+    username: vikas
+    password: Vikas@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+server:
+  port: 8086 # Changed port from 8085 to 8086 to avoid conflict with API Gateway
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
